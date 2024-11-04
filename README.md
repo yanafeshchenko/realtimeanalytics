@@ -25,4 +25,4 @@
 - Streamlit
 
 Діаграма ETL-пайплайну проєкту:
-![Alt text](relative/path/to/image.png)
+![Alt text](etl_pipeline_diagram.png)
