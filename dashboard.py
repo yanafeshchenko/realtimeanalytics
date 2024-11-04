@@ -112,64 +112,7 @@ def tweet_activity_fig2(df):
     #plt.tight_layout()
     return plt
 
-def geo_board(data):
-    df = pd.DataFrame(data)
-    geolocator = Nominatim(user_agent="geoapiExercises")
 
-    # Function to get coordinates
-    def get_coordinates(location):
-        try:
-            loc = geolocator.geocode(location)
-            if loc:
-                return loc.latitude, loc.longitude
-        except:
-            return None, None
-        return None, None
-
-    # Apply the function to get latitude and longitude
-    df['coordinates'] = df['user_location'].apply(lambda x: get_coordinates(x))
-    df[['latitude', 'longitude']] = pd.DataFrame(df['coordinates'].tolist(), index=df.index)
-    df = df.dropna(subset=['latitude', 'longitude'])  # Drop rows with missing coordinates
-
-    # Plotting with Plotly
-    fig_geo = px.scatter_geo(df,
-                         lat='latitude',
-                         lon='longitude',
-                         hover_name='user_location',
-                         size='tweet_count',
-                         projection="natural earth",
-                         title="Tweet Counts by User Location")
-    fig_geo.update_geos(showcoastlines=True, coastlinecolor="Black", showland=True, landcolor="LightGreen")
-    return fig_geo
-
-
-def geo_board2(df):
-    #df = pd.DataFrame(data)
-    geolocator = Nominatim(user_agent="geoapiExercises")
-
-    def get_coordinates(location):
-        try:
-            loc = geolocator.geocode(location, timeout=10)
-            if loc:
-                return loc.latitude, loc.longitude
-        except:
-            return None, None
-        return None, None
-
-    # Отримання координат для кожного розташування
-    df['coordinates'] = df['user_location'].apply(lambda x: get_coordinates(x) if pd.notnull(x) else (None, None))
-    df[['latitude', 'longitude']] = pd.DataFrame(df['coordinates'].tolist(), index=df.index)
-    df = df.dropna(subset=['latitude', 'longitude'])  # Видаляємо рядки без координат
-
-    # Побудова графіка з Plotly
-    fig_geo = px.scatter_geo(df,
-                             lat='latitude',
-                             lon='longitude',
-                             hover_name='user_location',
-                             projection="natural earth",
-                             title="Tweet Counts by User Location")
-    fig_geo.update_geos(showcoastlines=True, coastlinecolor="Black", showland=True, landcolor="LightGreen")
-    return fig_geo
 
 def update_data():
     # Placeholder to display last refresh time
@@ -263,3 +206,33 @@ st.markdown(
 
 update_data()
 st_autorefresh(interval=20 * 1000, key="auto")
+
+
+
+def geo_board2(df):
+    #df = pd.DataFrame(data)
+    geolocator = Nominatim(user_agent="geoapiExercises")
+
+    def get_coordinates(location):
+        try:
+            loc = geolocator.geocode(location, timeout=10)
+            if loc:
+                return loc.latitude, loc.longitude
+        except:
+            return None, None
+        return None, None
+
+    # Отримання координат для кожного розташування
+    df['coordinates'] = df['user_location'].apply(lambda x: get_coordinates(x) if pd.notnull(x) else (None, None))
+    df[['latitude', 'longitude']] = pd.DataFrame(df['coordinates'].tolist(), index=df.index)
+    df = df.dropna(subset=['latitude', 'longitude'])  # Видаляємо рядки без координат
+
+    # Побудова графіка з Plotly
+    fig_geo = px.scatter_geo(df,
+                             lat='latitude',
+                             lon='longitude',
+                             hover_name='user_location',
+                             projection="natural earth",
+                             title="Tweet Counts by User Location")
+    fig_geo.update_geos(showcoastlines=True, coastlinecolor="Black", showland=True, landcolor="LightGreen")
+    return fig_geo
